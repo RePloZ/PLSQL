@@ -1,0 +1,436 @@
+SQL> 
+SQL> -- connexion en tant que SYSTEM
+SQL> CONNECT system/oracle
+Connecté.
+SQL> 
+SQL> -- CREATION DU ROLE ROLSTAGE (SQL + PL)
+SQL> drop ROLE	rolstage
+  2  /
+
+Rôle supprimé.
+
+SQL> create role rolstage
+  2  /
+
+Rôle créé.
+
+SQL> grant connect  to rolstage
+  2  /
+
+Autorisation de privilèges (GRANT) acceptée.
+
+SQL> grant resource to rolstage
+  2  /
+
+Autorisation de privilèges (GRANT) acceptée.
+
+SQL> 
+SQL> -- création du compte propriétaire de l'application
+SQL> DROP USER charly  CASCADE
+  2  /
+
+Utilisateur supprimé.
+
+SQL> CREATE USER charly IDENTIFIED BY charly
+  2  DEFAULT TABLESPACE users
+  3  QUOTA UNLIMITED ON users
+  4  /
+
+Utilisateur créé.
+
+SQL> 
+SQL> grant rolstage to charly
+  2  /
+
+Autorisation de privilèges (GRANT) acceptée.
+
+SQL> 
+SQL> -- connexion en tant que charly pour creer l'application
+SQL> CONNECT charly/charly
+Connecté.
+SQL> 
+SQL> -- création des tables
+SQL> @CreTablesAvion
+SQL> -- ============================================================
+SQL> --   Nom de la base   :  TAHITI
+SQL> --   Nom de SGBD	   :  ORACLE Version 8
+SQL> --   Date de cr‚ation :  22/08/2010  17:09
+SQL> -- ============================================================
+SQL> 
+SQL> drop index EST_AFFECTE_PK
+  2  /
+drop index EST_AFFECTE_PK
+           *
+ERREUR à la ligne 1 :
+ORA-01418: l'index indiqué n'existe pas 
+
+
+SQL> 
+SQL> drop index EST_EQUIPAGE_FK
+  2  /
+drop index EST_EQUIPAGE_FK
+           *
+ERREUR à la ligne 1 :
+ORA-01418: l'index indiqué n'existe pas 
+
+
+SQL> 
+SQL> drop index EQUIPAGE_FK
+  2  /
+drop index EQUIPAGE_FK
+           *
+ERREUR à la ligne 1 :
+ORA-01418: l'index indiqué n'existe pas 
+
+
+SQL> 
+SQL> drop table EST_EQUIPAGE cascade constraints
+  2  /
+drop table EST_EQUIPAGE cascade constraints
+           *
+ERREUR à la ligne 1 :
+ORA-00942: Table ou vue inexistante 
+
+
+SQL> 
+SQL> drop index VOL_PK
+  2  /
+drop index VOL_PK
+           *
+ERREUR à la ligne 1 :
+ORA-01418: l'index indiqué n'existe pas 
+
+
+SQL> 
+SQL> drop index UTILISE_FK
+  2  /
+drop index UTILISE_FK
+           *
+ERREUR à la ligne 1 :
+ORA-01418: l'index indiqué n'existe pas 
+
+
+SQL> 
+SQL> drop table VOL cascade constraints
+  2  /
+drop table VOL cascade constraints
+           *
+ERREUR à la ligne 1 :
+ORA-00942: Table ou vue inexistante 
+
+
+SQL> 
+SQL> drop index AVION_PK
+  2  /
+drop index AVION_PK
+           *
+ERREUR à la ligne 1 :
+ORA-01418: l'index indiqué n'existe pas 
+
+
+SQL> 
+SQL> drop table AVION cascade constraints
+  2  /
+drop table AVION cascade constraints
+           *
+ERREUR à la ligne 1 :
+ORA-00942: Table ou vue inexistante 
+
+
+SQL> 
+SQL> drop index EMPLOYE_PK
+  2  /
+drop index EMPLOYE_PK
+           *
+ERREUR à la ligne 1 :
+ORA-01418: l'index indiqué n'existe pas 
+
+
+SQL> 
+SQL> drop index A_POUR_PATRON_FK
+  2  /
+drop index A_POUR_PATRON_FK
+           *
+ERREUR à la ligne 1 :
+ORA-01418: l'index indiqué n'existe pas 
+
+
+SQL> 
+SQL> drop table EMPLOYE cascade constraints
+  2  /
+drop table EMPLOYE cascade constraints
+           *
+ERREUR à la ligne 1 :
+ORA-00942: Table ou vue inexistante 
+
+
+SQL> 
+SQL> -- ============================================================
+SQL> --   Table : EMPLOYE
+SQL> -- ============================================================
+SQL> create table EMPLOYE
+  2  (
+  3  	 ID_EMP       INTEGER		     not null,
+  4  	 NOM	      VARCHAR2(30)	     not null,
+  5  	 SALAIRE      NUMBER(4) 	     not null,
+  6  	 EMPLOI       VARCHAR2(20)	     null    ,
+  7  	 EMP_ID_EMP   INTEGER		     null    ,
+  8  	 constraint PK_EMPLOYE primary key (ID_EMP)
+  9  )
+ 10  /
+
+Table créée.
+
+SQL> 
+SQL> -- ============================================================
+SQL> --   Index : A_POUR_PATRON_FK
+SQL> -- ============================================================
+SQL> create index A_POUR_PATRON_FK on EMPLOYE (EMP_ID_EMP asc)
+  2  /
+
+Index créé.
+
+SQL> 
+SQL> -- ============================================================
+SQL> --   Table : AVION
+SQL> -- ============================================================
+SQL> create table AVION
+  2  (
+  3  	 ID_AVION     INTEGER		     not null,
+  4  	 NOM_AVION    VARCHAR2(30)	     null    ,
+  5  	 constraint PK_AVION primary key (ID_AVION)
+  6  )
+  7  /
+
+Table créée.
+
+SQL> 
+SQL> -- ============================================================
+SQL> --   Table : VOL
+SQL> -- ============================================================
+SQL> create table VOL
+  2  (
+  3  	 NO_VOL       INTEGER		     not null,
+  4  	 VOL_DEPART   DATE		     not null,
+  5  	 VOL_ARRIVE   DATE			 null,
+  6  	 DESTINATION  CHAR(20)		     not null,
+  7  	 ID_AVION     INTEGER		     not null,
+  8  	 constraint PK_VOL primary key (NO_VOL)
+  9  )
+ 10  /
+
+Table créée.
+
+SQL> 
+SQL> -- ============================================================
+SQL> --   Index : UTILISE_FK
+SQL> -- ============================================================
+SQL> create index UTILISE_FK on VOL (ID_AVION asc)
+  2  /
+
+Index créé.
+
+SQL> 
+SQL> -- ============================================================
+SQL> --   Table : EST_EQUIPAGE
+SQL> -- ============================================================
+SQL> create table EST_EQUIPAGE
+  2  (
+  3  	 ID_EMP       INTEGER		     not null,
+  4  	 NO_VOL       INTEGER		     not null,
+  5  	 constraint PK_EST_EQUIPAGE primary key (ID_EMP, NO_VOL)
+  6  )
+  7  /
+
+Table créée.
+
+SQL> 
+SQL> -- ============================================================
+SQL> --   Index : EST_EQUIPAGE_FK
+SQL> -- ============================================================
+SQL> create index EST_EQUIPAGE_FK on EST_EQUIPAGE (ID_EMP asc)
+  2  /
+
+Index créé.
+
+SQL> 
+SQL> -- ============================================================
+SQL> --   Index : EQUIPAGE_FK
+SQL> -- ============================================================
+SQL> create index EQUIPAGE_FK on EST_EQUIPAGE (NO_VOL asc)
+  2  /
+
+Index créé.
+
+SQL> 
+SQL> -- ============================================================
+SQL> --   Index : CLES ETRANGERES
+SQL> -- ============================================================
+SQL> alter table EMPLOYE
+  2  	 add constraint FK_EMPLOYE_A_POUR_PA_EMPLOYE foreign key  (EMP_ID_EMP)
+  3  	    references EMPLOYE (ID_EMP)
+  4  /
+
+Table modifiée.
+
+SQL> 
+SQL> alter table VOL
+  2  	 add constraint FK_VOL_UTILISE_AVION foreign key  (ID_AVION)
+  3  	    references AVION (ID_AVION)
+  4  /
+
+Table modifiée.
+
+SQL> 
+SQL> alter table EST_EQUIPAGE
+  2  	 add constraint FK_EST_EQUI_EST_EQUIP_EMPLOYE foreign key  (ID_EMP)
+  3  	    references EMPLOYE (ID_EMP)
+  4  /
+
+Table modifiée.
+
+SQL> 
+SQL> alter table EST_EQUIPAGE
+  2  	 add constraint FK_EST_EQUI_EQUIPAGE_VOL foreign key  (NO_VOL)
+  3  	    references VOL (NO_VOL)
+  4  /
+
+Table modifiée.
+
+SQL> 
+SQL> alter table EMPLOYE
+  2    add CONSTRAINT EMPLOYE_SALAIRE_CC
+  3    CHECK (salaire >100)
+  4  /
+
+Table modifiée.
+
+SQL> SQL> 
+SQL> @RempliAvion
+SQL> 
+SQL> --
+SQL> --Suppression des lignes des tables de la base eleve
+SQL> --
+SQL> 
+SQL> DELETE FROM est_equipage;
+
+0 ligne(s) supprimée(s).
+
+SQL> DELETE FROM employe;
+
+0 ligne(s) supprimée(s).
+
+SQL> DELETE FROM vol;
+
+0 ligne(s) supprimée(s).
+
+SQL> DELETE FROM avion;
+
+0 ligne(s) supprimée(s).
+
+SQL> 
+SQL> --
+SQL> -- INSERTION LIGNES DANS BASE TAHITI
+SQL> --
+SQL> --
+SQL> ------------- INSERT Avion --------------------------
+SQL> --
+SQL> INSERT INTO Avion VALUES
+  2  (1,'Caravelle' );
+
+1 ligne créée.
+
+SQL> INSERT INTO Avion VALUES
+  2  (2,'Boïng' );
+
+1 ligne créée.
+
+SQL> INSERT INTO Avion VALUES
+  2  (3,'Planeur' );
+
+1 ligne créée.
+
+SQL> insert into avion values
+  2  (4,'A_Caravelle_2');
+
+1 ligne créée.
+
+SQL> 
+SQL> ------------- INSERT Vol --------------------------
+SQL> --
+SQL> INSERT INTO VOL VALUES
+  2  (1,sysdate,sysdate+1,'Tahiti',1 );
+
+1 ligne créée.
+
+SQL> INSERT INTO VOL VALUES
+  2  (2,NEXT_DAY(sysdate,'JEUDI'),NEXT_DAY(sysdate,'VENDREDI'),'Marquises',1 );
+
+1 ligne créée.
+
+SQL> INSERT INTO VOL VALUES
+  2  (3,LAST_DAY(sysdate),NULL ,'Tokio',2 );
+
+1 ligne créée.
+
+SQL> 
+SQL> 
+SQL> ------------- INSERT Employe --------------------------
+SQL> --
+SQL> INSERT INTO Employe VALUES
+  2  (1,'Gaston',1700,'Directeur',null);
+
+1 ligne créée.
+
+SQL> INSERT INTO Employe VALUES
+  2  (2,'Spirou',2000,'Pilote',1 );
+
+1 ligne créée.
+
+SQL> INSERT INTO Employe VALUES
+  2  (3,'Titeuf',1800,'Stiwart',2 );
+
+1 ligne créée.
+
+SQL> INSERT INTO Employe VALUES
+  2  (4,'Mariline',2000,'Hotesse de l''Air',1 );
+
+1 ligne créée.
+
+SQL> 
+SQL> ------------- INSERT Est_Equipage --------------------------
+SQL> --
+SQL> INSERT INTO Est_Equipage VALUES
+  2  (1,1);
+
+1 ligne créée.
+
+SQL> INSERT INTO Est_Equipage VALUES
+  2  (4,1);
+
+1 ligne créée.
+
+SQL> INSERT INTO Est_Equipage VALUES
+  2  (3,2);
+
+1 ligne créée.
+
+SQL> INSERT INTO Est_Equipage VALUES
+  2  (4,2);
+
+1 ligne créée.
+
+SQL> 
+SQL> --
+SQL> --
+SQL> commit;
+
+Validation effectuée.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> SQL> 
+SQL> 
+SQL> -- ferme le journal de la création
+SQL> SPOOL OFF
